@@ -1420,7 +1420,7 @@ export default {
       spendingRankingUsage: '用量',
       spendingRankingSortBy: '排行榜排序',
       spendingRankingSortSpend: '按消费',
-      spendingRankingSortTokens: '按 Token',
+      spendingRankingSortTokens: '按Token',
       spendShort: '消费',
       requestsShort: '请求',
       tokensShort: 'Token',

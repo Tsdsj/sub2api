@@ -1408,7 +1408,7 @@ export default {
       spendingRankingSpend: 'Spend',
       spendingRankingOther: 'Others',
       spendingRankingUsage: 'Usage',
-      spendingRankingSortBy: 'Ranking Sort',
+      spendingRankingSortBy: 'Sort Ranking By',
       spendingRankingSortSpend: 'By Spend',
       spendingRankingSortTokens: 'By Tokens',
       spendShort: 'Spend',

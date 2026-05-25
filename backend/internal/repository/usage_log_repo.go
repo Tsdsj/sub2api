@@ -2352,12 +2352,7 @@ func (r *usageLogRepository) GetUserSpendingRanking(ctx context.Context, startTi
 	if limit <= 0 {
 		limit = 12
 	}
-	orderBy := "actual_cost DESC, tokens DESC, user_id ASC"
-	if strings.EqualFold(strings.TrimSpace(sortBy), "tokens") {
-		orderBy = "tokens DESC, actual_cost DESC, user_id ASC"
-	}
-
-	query := `
+	queryOrderByCost := `
 		WITH user_spend AS (
 			SELECT
 				u.user_id,
@@ -2382,7 +2377,7 @@ func (r *usageLogRepository) GetUserSpendingRanking(ctx context.Context, startTi
 				COALESCE(SUM(requests) OVER (), 0) as total_requests,
 				COALESCE(SUM(tokens) OVER (), 0) as total_tokens
 			FROM user_spend
-			ORDER BY ` + orderBy + `
+			ORDER BY actual_cost DESC, tokens DESC, user_id ASC
 			LIMIT $3
 		)
 		SELECT
@@ -2395,8 +2390,52 @@ func (r *usageLogRepository) GetUserSpendingRanking(ctx context.Context, startTi
 			total_requests,
 			total_tokens
 		FROM ranked
-		ORDER BY ` + orderBy + `
+		ORDER BY actual_cost DESC, tokens DESC, user_id ASC
 	`
+	queryOrderByTokens := `
+		WITH user_spend AS (
+			SELECT
+				u.user_id,
+				COALESCE(us.email, '') as email,
+				COALESCE(SUM(u.actual_cost), 0) as actual_cost,
+				COUNT(*) as requests,
+				COALESCE(SUM(u.input_tokens + u.output_tokens + u.cache_creation_tokens + u.cache_read_tokens), 0) as tokens
+			FROM usage_logs u
+			LEFT JOIN users us ON u.user_id = us.id
+			WHERE u.created_at >= $1 AND u.created_at < $2
+				AND u.actual_cost > 0
+			GROUP BY u.user_id, us.email
+		),
+		ranked AS (
+			SELECT
+				user_id,
+				email,
+				actual_cost,
+				requests,
+				tokens,
+				COALESCE(SUM(actual_cost) OVER (), 0) as total_actual_cost,
+				COALESCE(SUM(requests) OVER (), 0) as total_requests,
+				COALESCE(SUM(tokens) OVER (), 0) as total_tokens
+			FROM user_spend
+			ORDER BY tokens DESC, actual_cost DESC, user_id ASC
+			LIMIT $3
+		)
+		SELECT
+			user_id,
+			email,
+			actual_cost,
+			requests,
+			tokens,
+			total_actual_cost,
+			total_requests,
+			total_tokens
+		FROM ranked
+		ORDER BY tokens DESC, actual_cost DESC, user_id ASC
+	`
+	query := queryOrderByCost
+	if strings.TrimSpace(sortBy) == "tokens" {
+		query = queryOrderByTokens
+	}
 
 	rows, err := r.sql.QueryContext(ctx, query, startTime, endTime, limit)
 	if err != nil {

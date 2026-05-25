@@ -417,6 +417,24 @@ const formatLocalDate = (date: Date): string => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
+const detectQuickRangePreset = (
+  start: string,
+  end: string
+): 'custom' | 'today' | 'last7days' => {
+  const now = new Date()
+  const today = formatLocalDate(now)
+  if (start === today && end === today) {
+    return 'today'
+  }
+
+  const sevenDaysStart = new Date(now)
+  sevenDaysStart.setDate(sevenDaysStart.getDate() - 6)
+  if (start === formatLocalDate(sevenDaysStart) && end === today) {
+    return 'last7days'
+  }
+  return 'custom'
+}
+
 const getLast24HoursRangeDates = (): { start: string; end: string } => {
   const end = new Date()
   const start = new Date(end.getTime() - 24 * 60 * 60 * 1000)
@@ -589,7 +607,8 @@ const formatNumber = (value: number): string => {
   return value.toLocaleString()
 }
 
-const formatCost = (value: number): string => {
+const formatCost = (value: number | undefined | null): string => {
+  if (value === undefined || value === null || Number.isNaN(value)) return '0.0000'
   if (value >= 1000) {
     return (value / 1000).toFixed(2) + 'K'
   } else if (value >= 1) {
@@ -635,7 +654,7 @@ const onDateRangeChange = (range: {
   } else {
     granularity.value = 'day'
   }
-  quickRangePreset.value = 'custom'
+  quickRangePreset.value = detectQuickRangePreset(range.startDate, range.endDate)
   loadChartData()
 }
 
