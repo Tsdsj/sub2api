@@ -20,6 +20,7 @@ type dashboardUsageRepoCapture struct {
 	modelRequestType *int16
 	modelStream      *bool
 	rankingLimit     int
+	rankingSortBy    string
 	ranking          []usagestats.UserSpendingRankingItem
 	rankingTotal     float64
 }
@@ -56,8 +57,10 @@ func (s *dashboardUsageRepoCapture) GetUserSpendingRanking(
 	ctx context.Context,
 	startTime, endTime time.Time,
 	limit int,
+	sortBy string,
 ) (*usagestats.UserSpendingRankingResponse, error) {
 	s.rankingLimit = limit
+	s.rankingSortBy = sortBy
 	return &usagestats.UserSpendingRankingResponse{
 		Ranking:         s.ranking,
 		TotalActualCost: s.rankingTotal,
@@ -187,6 +190,7 @@ func TestDashboardUsersRankingLimitAndCache(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rec.Code)
 	require.Equal(t, 50, repo.rankingLimit)
+	require.Equal(t, "actual_cost", repo.rankingSortBy)
 	require.Contains(t, rec.Body.String(), "\"total_actual_cost\":88.8")
 	require.Contains(t, rec.Body.String(), "\"total_requests\":44")
 	require.Contains(t, rec.Body.String(), "\"total_tokens\":1234")
@@ -198,4 +202,13 @@ func TestDashboardUsersRankingLimitAndCache(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rec2.Code)
 	require.Equal(t, "hit", rec2.Header().Get("X-Snapshot-Cache"))
+
+	req3 := httptest.NewRequest(http.MethodGet, "/admin/dashboard/users-ranking?limit=10&sort_by=tokens&start_date=2025-01-01&end_date=2025-01-02", nil)
+	rec3 := httptest.NewRecorder()
+	router.ServeHTTP(rec3, req3)
+
+	require.Equal(t, http.StatusOK, rec3.Code)
+	require.Equal(t, 10, repo.rankingLimit)
+	require.Equal(t, "tokens", repo.rankingSortBy)
+	require.Equal(t, "miss", rec3.Header().Get("X-Snapshot-Cache"))
 }

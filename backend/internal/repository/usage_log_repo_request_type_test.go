@@ -522,7 +522,7 @@ func TestUsageLogRepositoryGetUserSpendingRanking(t *testing.T) {
 		WithArgs(start, end, 12).
 		WillReturnRows(rows)
 
-	got, err := repo.GetUserSpendingRanking(context.Background(), start, end, 12)
+	got, err := repo.GetUserSpendingRanking(context.Background(), start, end, 12, "actual_cost")
 	require.NoError(t, err)
 	require.Equal(t, &usagestats.UserSpendingRankingResponse{
 		Ranking: []usagestats.UserSpendingRankingItem{
@@ -534,6 +534,27 @@ func TestUsageLogRepositoryGetUserSpendingRanking(t *testing.T) {
 		TotalRequests:   30,
 		TotalTokens:     2600,
 	}, got)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestUsageLogRepositoryGetUserSpendingRankingSortByTokens(t *testing.T) {
+	db, mock := newSQLMock(t)
+	repo := &usageLogRepository{sql: db}
+
+	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := start.Add(24 * time.Hour)
+
+	rows := sqlmock.NewRows([]string{"user_id", "email", "actual_cost", "requests", "tokens", "total_actual_cost", "total_requests", "total_tokens"}).
+		AddRow(int64(9), "tok@example.com", 8.5, int64(3), int64(1200), 18.0, int64(8), int64(1800))
+
+	mock.ExpectQuery("WITH user_spend AS \\(").
+		WithArgs(start, end, 5).
+		WillReturnRows(rows)
+
+	got, err := repo.GetUserSpendingRanking(context.Background(), start, end, 5, "tokens")
+	require.NoError(t, err)
+	require.Len(t, got.Ranking, 1)
+	require.Equal(t, int64(1200), got.Ranking[0].Tokens)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

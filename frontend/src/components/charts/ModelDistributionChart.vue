@@ -254,6 +254,7 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 const { t } = useI18n()
 
 type DistributionMetric = 'tokens' | 'actual_cost'
+type RankingMetric = 'tokens' | 'actual_cost'
 type ModelSource = 'requested' | 'upstream' | 'mapping'
 type RankingDisplayItem = UserSpendingRankingItem & { isOther?: boolean }
 const props = withDefaults(defineProps<{
@@ -266,6 +267,7 @@ const props = withDefaults(defineProps<{
   rankingTotalActualCost?: number
   rankingTotalRequests?: number
   rankingTotalTokens?: number
+  rankingMetric?: RankingMetric
   loading?: boolean
   metric?: DistributionMetric
   showSourceToggle?: boolean
@@ -284,6 +286,7 @@ const props = withDefaults(defineProps<{
   rankingTotalActualCost: 0,
   rankingTotalRequests: 0,
   rankingTotalTokens: 0,
+  rankingMetric: 'actual_cost',
   loading: false,
   metric: 'tokens',
   showSourceToggle: false,
@@ -376,12 +379,12 @@ const rankingChartData = computed(() => {
   if (!props.rankingItems?.length) return null
 
   const labels = props.rankingItems.map((item, index) => `#${index + 1} ${getRankingUserLabel(item)}`)
-  const data = props.rankingItems.map((item) => item.actual_cost)
+  const data = props.rankingItems.map((item) => props.rankingMetric === 'tokens' ? item.tokens : item.actual_cost)
   const backgroundColor = chartColors.slice(0, props.rankingItems.length)
 
   if (otherRankingItem.value) {
     labels.push(t('admin.dashboard.spendingRankingOther'))
-    data.push(otherRankingItem.value.actual_cost)
+    data.push(props.rankingMetric === 'tokens' ? otherRankingItem.value.tokens : otherRankingItem.value.actual_cost)
     backgroundColor.push('#94a3b8')
   }
 
@@ -463,7 +466,10 @@ const rankingDoughnutOptions = computed(() => ({
           const value = context.raw as number
           const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0)
           const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0'
-          return `${context.label}: $${formatCost(value)} (${percentage}%)`
+          const formattedValue = props.rankingMetric === 'tokens'
+            ? formatTokens(value)
+            : `$${formatCost(value)}`
+          return `${context.label}: ${formattedValue} (${percentage}%)`
         }
       }
     }

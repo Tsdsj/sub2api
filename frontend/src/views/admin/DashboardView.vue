@@ -234,6 +234,55 @@
               <button @click="loadDashboardStats" :disabled="chartsLoading" class="btn btn-secondary">
                 {{ t('common.refresh') }}
               </button>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                  :class="quickRangePreset === 'today'
+                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-dark-800 dark:text-gray-300 dark:hover:bg-dark-700'"
+                  @click="applyQuickRange('today')"
+                >
+                  {{ t('dates.today') }}
+                </button>
+                <button
+                  type="button"
+                  class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                  :class="quickRangePreset === 'last7days'
+                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-dark-800 dark:text-gray-300 dark:hover:bg-dark-700'"
+                  @click="applyQuickRange('last7days')"
+                >
+                  {{ t('admin.dashboard.last7Days') }}
+                </button>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('admin.dashboard.spendingRankingSortBy') }}:
+                </span>
+                <div class="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-700 dark:bg-dark-800">
+                  <button
+                    type="button"
+                    class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                    :class="rankingSortBy === 'actual_cost'
+                      ? 'bg-white text-gray-900 shadow-sm dark:bg-dark-700 dark:text-white'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                    @click="setRankingSortBy('actual_cost')"
+                  >
+                    {{ t('admin.dashboard.spendingRankingSortSpend') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                    :class="rankingSortBy === 'tokens'
+                      ? 'bg-white text-gray-900 shadow-sm dark:bg-dark-700 dark:text-white'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                    @click="setRankingSortBy('tokens')"
+                  >
+                    {{ t('admin.dashboard.spendingRankingSortTokens') }}
+                  </button>
+                </div>
+              </div>
               <div class="ml-auto flex items-center gap-2">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
                   >{{ t('admin.dashboard.granularity') }}:</span
@@ -258,6 +307,7 @@
               :ranking-total-actual-cost="rankingTotalActualCost"
               :ranking-total-requests="rankingTotalRequests"
               :ranking-total-tokens="rankingTotalTokens"
+              :ranking-metric="rankingSortBy"
               :loading="chartsLoading"
               :ranking-loading="rankingLoading"
               :ranking-error="rankingError"
@@ -355,6 +405,8 @@ const rankingItems = ref<UserSpendingRankingItem[]>([])
 const rankingTotalActualCost = ref(0)
 const rankingTotalRequests = ref(0)
 const rankingTotalTokens = ref(0)
+const rankingSortBy = ref<'actual_cost' | 'tokens'>('actual_cost')
+const quickRangePreset = ref<'custom' | 'today' | 'last7days'>('custom')
 let chartLoadSeq = 0
 let usersTrendLoadSeq = 0
 let rankingLoadSeq = 0
@@ -583,8 +635,27 @@ const onDateRangeChange = (range: {
   } else {
     granularity.value = 'day'
   }
-
+  quickRangePreset.value = 'custom'
   loadChartData()
+}
+
+const applyQuickRange = (preset: 'today' | 'last7days') => {
+  const end = new Date()
+  const start = new Date(end)
+  if (preset === 'last7days') {
+    start.setDate(start.getDate() - 6)
+  }
+  startDate.value = formatLocalDate(start)
+  endDate.value = formatLocalDate(end)
+  quickRangePreset.value = preset
+  granularity.value = preset === 'today' ? 'hour' : 'day'
+  loadChartData()
+}
+
+const setRankingSortBy = (sortBy: 'actual_cost' | 'tokens') => {
+  if (rankingSortBy.value === sortBy) return
+  rankingSortBy.value = sortBy
+  loadUserSpendingRanking()
 }
 
 // Load data
@@ -654,7 +725,8 @@ const loadUserSpendingRanking = async () => {
     const response = await adminAPI.dashboard.getUserSpendingRanking({
       start_date: startDate.value,
       end_date: endDate.value,
-      limit: rankingLimit
+      limit: rankingLimit,
+      sort_by: rankingSortBy.value
     })
     if (currentSeq !== rankingLoadSeq) return
     rankingItems.value = response.ranking || []

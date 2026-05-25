@@ -139,5 +139,8 @@ describe('admin DashboardView', () => {
       end_date: formatLocalDate(now),
       granularity: 'hour'
     }))
+    expect(getUserSpendingRanking).toHaveBeenCalledWith(expect.objectContaining({
+      sort_by: 'actual_cost'
+    }))
   })
 })
