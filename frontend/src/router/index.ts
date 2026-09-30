@@ -277,6 +277,17 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/skins',
+    name: 'SkinCenter',
+    component: () => import('@/views/user/SkinCenterView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: 'Skin Center',
+      titleKey: 'skinCenter.title'
+    }
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: () => import('@/views/user/ProfileView.vue'),

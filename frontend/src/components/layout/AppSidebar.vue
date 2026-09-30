@@ -149,6 +149,19 @@
 
     <!-- Bottom Section -->
     <div class="mt-auto border-t border-gray-100 p-3 dark:border-dark-800">
+      <!-- Personal appearance is available in both standard and simple mode. -->
+      <router-link
+        to="/skins"
+        class="sidebar-link mb-2 w-full"
+        :class="{ 'sidebar-link-active': isActive('/skins'), 'sidebar-link-collapsed': sidebarCollapsed }"
+        :title="sidebarCollapsed ? t('skinCenter.title') : undefined"
+        :aria-label="t('skinCenter.title')"
+        @click="handleMenuItemClick('/skins')"
+      >
+        <Icon name="swatch" class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+        <span class="sidebar-label" :class="{ 'sidebar-label-collapsed': sidebarCollapsed }" :aria-hidden="sidebarCollapsed ? 'true' : 'false'">{{ t('skinCenter.title') }}</span>
+      </router-link>
+
       <!-- Theme Toggle -->
       <button
         @click="toggleTheme"
