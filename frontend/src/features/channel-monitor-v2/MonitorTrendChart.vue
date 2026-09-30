@@ -5,7 +5,7 @@
     <div class="card-header mb-4 flex shrink-0 flex-wrap items-start justify-between gap-3 !border-0 !p-0">
       <div class="min-w-0">
         <h2 class="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
-          <span class="inline-flex h-4 w-4 text-sky-500" aria-hidden="true">
+          <span class="inline-flex h-4 w-4" :style="chartIconStyle" aria-hidden="true">
             <Icon name="chart" size="sm" />
           </span>
           {{ t('channelMonitorV2.chart.title') }}
@@ -27,7 +27,7 @@
         <span class="badge badge-gray shrink-0">{{ bucketLabel }}</span>
         <button
           type="button"
-          class="inline-flex shrink-0 items-center rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-dark-700 dark:bg-dark-900 dark:text-gray-300 dark:hover:bg-dark-800"
+          class="inline-flex shrink-0 items-center rounded-lg border border-gray-200 bg-surface px-2 py-1 text-[11px] font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-dark-700 dark:bg-dark-900 dark:text-gray-300 dark:hover:bg-dark-800"
           :disabled="!zoomed"
           @click="resetChartZoom"
         >
@@ -74,6 +74,7 @@ import {
 import { Line } from 'vue-chartjs'
 import EmptyState from '@/components/common/EmptyState.vue'
 import Icon from '@/components/icons/Icon.vue'
+import { useChartTheme } from '@/composables/useChartTheme'
 import type { MonitorCoverage, MonitorMetric, MonitorHealth } from '@/api/channelMonitorV2'
 import { formatMonitorMs, formatMonitorPercent } from '@/features/channel-monitor-v2/monitorFormat'
 import {
@@ -98,9 +99,8 @@ const chartRef = ref<HTMLElement | null>(null)
 const zoom = ref<ZoomState>(resetZoom())
 const zoomed = computed(() => isZoomed(zoom.value))
 
-const isDark = computed(() =>
-  typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
-)
+const { chartTheme, accent } = useChartTheme()
+const chartIconStyle = computed(() => ({ color: accent('#0ea5e9') }))
 
 const bucketLabel = computed(() => {
   const seconds = props.coverage?.bucket_seconds || 60
@@ -205,11 +205,7 @@ function smoothTrend(values: Array<number | null>): Array<number | null> {
 }
 
 const chartOptions = computed(() => {
-  const text = isDark.value ? '#9ca3af' : '#6b7280'
-  const grid = isDark.value ? '#374151' : '#f3f4f6'
-  const tooltipBg = isDark.value ? '#1f2937' : '#ffffff'
-  const tooltipTitle = isDark.value ? '#f3f4f6' : '#111827'
-  const tooltipBody = isDark.value ? '#d1d5db' : '#4b5563'
+  const { text, grid, surface, title, body } = chartTheme.value
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -217,9 +213,9 @@ const chartOptions = computed(() => {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: tooltipBg,
-        titleColor: tooltipTitle,
-        bodyColor: tooltipBody,
+        backgroundColor: surface,
+        titleColor: title,
+        bodyColor: body,
         borderColor: grid,
         borderWidth: 1,
         padding: 10,

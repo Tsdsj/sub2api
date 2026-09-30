@@ -1,9 +1,9 @@
 export default {
   skinCenter: {
     title: 'Skin Center',
-    subtitle: 'Make this space your own. Pick a color palette for the interface and see it change instantly.',
-    chooseSkin: 'Choose your palette',
-    choiceHint: 'Select a skin to apply it immediately. Each preview shows its own colors.',
+    subtitle: 'Make this space your own. Choose a coordinated palette for backgrounds, panels, navigation, and controls.',
+    chooseSkin: 'Choose your skin',
+    choiceHint: 'Apply instantly across the interface. Status indicators and categorical chart colors keep their meaning.',
     selected: 'Selected',
     restoreDefault: 'Restore default',
     localTitle: 'Your browser, your style',

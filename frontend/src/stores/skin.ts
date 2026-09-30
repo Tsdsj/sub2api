@@ -1,10 +1,10 @@
 import { onScopeDispose, readonly, ref } from 'vue'
 import { defineStore } from 'pinia'
 import {
-  DEFAULT_PRIMARY_COLORS,
   DEFAULT_SKIN_ID,
   SKIN_STORAGE_KEY,
   resolveSkin,
+  skinVariables,
   type SkinId
 } from '@/config/skins'
 
@@ -20,19 +20,13 @@ export const useSkinStore = defineStore('skin', () => {
     const root = document.documentElement
     root.dataset.skin = preset.id
 
-    // Removing overrides restores the exact original Tailwind defaults.
-    for (const shade of Object.keys(DEFAULT_PRIMARY_COLORS)) {
-      const property = `--color-primary-${shade}`
+    // Remove all overrides for the original skin so legacy defaults stay exact.
+    for (const [property, value] of Object.entries(skinVariables(preset))) {
       if (preset.id === DEFAULT_SKIN_ID) {
         root.style.removeProperty(property)
       } else {
-        root.style.setProperty(property, preset.colors[Number(shade) as keyof typeof preset.colors])
+        root.style.setProperty(property, value)
       }
-    }
-    if (preset.id === DEFAULT_SKIN_ID) {
-      root.style.removeProperty('--color-mesh-accent')
-    } else {
-      root.style.setProperty('--color-mesh-accent', preset.meshAccent)
     }
   }
 

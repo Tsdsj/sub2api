@@ -1,7 +1,11 @@
-import { DEFAULT_PRIMARY_COLORS } from './src/config/skins.ts'
+import { DEFAULT_PRIMARY_COLORS, DEFAULT_GRAY_COLORS, DEFAULT_DARK_COLORS, DEFAULT_ACTION_COLORS } from './src/config/skins.ts'
 
 const primaryColor = (shade, alpha = '<alpha-value>') =>
   `rgb(var(--color-primary-${shade}, ${DEFAULT_PRIMARY_COLORS[shade]}) / ${alpha})`
+
+const tokenPalette = (family, defaults) => Object.fromEntries(
+  Object.entries(defaults).map(([shade, value]) => [shade, `rgb(var(--color-${family}-${shade}, ${value}) / <alpha-value>)`])
+)
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -14,33 +18,20 @@ export default {
         primary: Object.fromEntries(
           Object.keys(DEFAULT_PRIMARY_COLORS).map((shade) => [shade, primaryColor(shade)])
         ),
-        // 辅助色 - 深蓝灰
-        accent: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
+        // Legacy gray/dark utilities consume shared semantic surface ramps.
+        gray: tokenPalette('gray', DEFAULT_GRAY_COLORS),
+        dark: tokenPalette('dark', DEFAULT_DARK_COLORS),
+        accent: tokenPalette('dark', DEFAULT_DARK_COLORS),
+        surface: {
+          DEFAULT: 'rgb(var(--color-surface-panel, 255 255 255) / <alpha-value>)',
+          sidebar: 'rgb(var(--color-surface-sidebar, 255 255 255) / <alpha-value>)'
         },
-        // 深色模式背景
-        dark: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
+        // Blue used by legacy operational controls is an interaction role, not
+        // a status color. Preserve that fallback without overriding blue globally.
+        action: {
+          ...tokenPalette('primary', DEFAULT_ACTION_COLORS),
+          foreground: 'rgb(var(--color-action-foreground, 59 130 246) / <alpha-value>)',
+          hover: 'rgb(var(--color-action-hover, 37 99 235) / <alpha-value>)'
         }
       },
       fontFamily: {

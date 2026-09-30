@@ -181,7 +181,7 @@ const kindBadgeClass = (kind: string) => {
         <!-- Loading -->
         <div v-if="loading" class="flex flex-1 items-center justify-center py-16">
           <div class="flex flex-col items-center gap-3">
-            <svg class="h-8 w-8 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+            <svg class="h-8 w-8 animate-spin text-action-foreground" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path
                 class="opacity-75"
@@ -265,7 +265,7 @@ const kindBadgeClass = (kind: string) => {
                   </th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200 bg-white dark:divide-dark-700 dark:bg-dark-800">
+              <tbody class="divide-y divide-gray-200 bg-surface dark:divide-dark-700 dark:bg-dark-800">
                 <tr v-for="(row, idx) in items" :key="idx" class="hover:bg-gray-50 dark:hover:bg-dark-700/50">
                   <td class="whitespace-nowrap px-4 py-3 text-xs text-gray-600 dark:text-gray-300">
                     {{ formatDateTime(row.created_at) }}

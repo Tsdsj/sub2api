@@ -12,8 +12,8 @@
           <!-- Total API Keys -->
           <div class="card p-4">
             <div class="flex items-center gap-3">
-              <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                <Icon name="key" size="md" class="text-blue-600 dark:text-blue-400" :stroke-width="2" />
+              <div class="rounded-lg bg-action-100 p-2 dark:bg-action-900/30">
+                <Icon name="key" size="md" class="text-action-600 dark:text-action-400" :stroke-width="2" />
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -322,7 +322,7 @@
               <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ t('admin.dashboard.recentUsage') }} (Top 12)</h3>
               <div class="flex gap-1" role="group" :aria-label="t('admin.dashboard.recentUsage')">
                 <button v-for="metric in (['tokens', 'actual_cost'] as const)" :key="metric" type="button"
-                  class="rounded px-2 py-1 text-xs" :class="userTrendMetric === metric ? 'bg-blue-600 text-white' : 'text-gray-600 dark:text-gray-300'"
+                  class="rounded px-2 py-1 text-xs" :class="userTrendMetric === metric ? 'bg-action-600 text-white' : 'text-gray-600 dark:text-gray-300'"
                   :aria-pressed="userTrendMetric === metric" @click="setUserTrendMetric(metric)">
                   {{ t(metric === 'tokens' ? 'admin.dashboard.tokens' : 'admin.dashboard.actualSpending') }}
                 </button>
@@ -370,6 +370,7 @@ import Select from '@/components/common/Select.vue'
 import ModelDistributionChart from '@/components/charts/ModelDistributionChart.vue'
 import TokenUsageTrend from '@/components/charts/TokenUsageTrend.vue'
 import { useBatchImageAccess } from '@/composables/useBatchImageAccess'
+import { useChartTheme } from '@/composables/useChartTheme'
 
 import {
   Chart as ChartJS,
@@ -444,16 +445,11 @@ const granularityOptions = computed(() => [
   { value: 'hour', label: t('admin.dashboard.hour') }
 ])
 
-// Dark mode detection
-const isDarkMode = computed(() => {
-  return document.documentElement.classList.contains('dark')
+// Preserve the original chart neutrals while sharing reactive skin and dark-mode colors.
+const { chartTheme } = useChartTheme({
+  light: { text: '#374151', grid: '#e5e7eb' },
+  dark: { text: '#e5e7eb', grid: '#374151' }
 })
-
-// Chart colors
-const chartColors = computed(() => ({
-  text: isDarkMode.value ? '#e5e7eb' : '#374151',
-  grid: isDarkMode.value ? '#374151' : '#e5e7eb'
-}))
 
 // Line chart options (for user trend chart)
 const lineOptions = computed(() => ({
@@ -467,7 +463,7 @@ const lineOptions = computed(() => ({
     legend: {
       position: 'top' as const,
       labels: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         usePointStyle: true,
         pointStyle: 'circle',
         padding: 15,
@@ -492,10 +488,10 @@ const lineOptions = computed(() => ({
   scales: {
     x: {
       grid: {
-        color: chartColors.value.grid
+        color: chartTheme.value.grid
       },
       ticks: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         font: {
           size: 10
         }
@@ -503,10 +499,10 @@ const lineOptions = computed(() => ({
     },
     y: {
       grid: {
-        color: chartColors.value.grid
+        color: chartTheme.value.grid
       },
       ticks: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         font: {
           size: 10
         },

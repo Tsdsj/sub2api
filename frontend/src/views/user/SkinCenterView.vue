@@ -45,7 +45,7 @@
             />
             <label
               :for="`skin-${preset.id}`"
-              class="block h-full cursor-pointer rounded-2xl border bg-white p-4 shadow-card transition-[border-color,box-shadow] duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-primary-600 dark:bg-dark-900 dark:peer-focus-visible:outline-primary-400 motion-reduce:transition-none sm:p-5"
+              class="block h-full cursor-pointer rounded-2xl border bg-surface p-4 shadow-card transition-[border-color,box-shadow] duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-primary-600 dark:bg-dark-900 dark:peer-focus-visible:outline-primary-400 motion-reduce:transition-none sm:p-5"
               :class="skinStore.selectedSkin === preset.id
                 ? 'border-primary-500 ring-1 ring-primary-500 dark:border-primary-400 dark:ring-primary-400'
                 : 'border-gray-200 hover:border-gray-300 hover:shadow-card-hover dark:border-dark-700 dark:hover:border-dark-500'"
@@ -75,7 +75,7 @@
         </div>
       </fieldset>
 
-      <div class="rounded-xl border border-gray-200 bg-white/70 p-4 dark:border-dark-800 dark:bg-dark-900/70 sm:p-5">
+      <div class="rounded-xl border border-gray-200 bg-surface/70 p-4 dark:border-dark-800 dark:bg-dark-900/70 sm:p-5">
         <div class="flex gap-3">
           <svg class="mt-0.5 h-5 w-5 shrink-0 text-gray-400 dark:text-dark-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
             <rect x="3" y="4" width="18" height="13" rx="2" />

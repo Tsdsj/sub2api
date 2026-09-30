@@ -1,6 +1,10 @@
 .PHONY: build build-backend build-frontend test test-backend test-frontend test-frontend-critical
 
 FRONTEND_CRITICAL_VITEST := \
+	src/composables/__tests__/useChartTheme.spec.ts \
+	src/components/charts/__tests__/chartSkinIntegration.spec.ts \
+	src/views/admin/ops/components/__tests__/OpsChartTheme.spec.ts \
+	src/views/admin/ops/components/__tests__/OpsDashboardHeaderTheme.spec.ts \
 	src/config/__tests__/skins.spec.ts \
 	src/stores/__tests__/skin.spec.ts \
 	src/views/user/__tests__/SkinCenterView.spec.ts \

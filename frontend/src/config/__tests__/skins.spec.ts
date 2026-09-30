@@ -11,7 +11,7 @@ describe('skin CSS integration', () => {
     const result = await postcss([tailwindcss({
       ...tailwindConfig,
       content: [{
-        raw: 'bg-primary-500/20 text-primary-600 dark:text-primary-400 bg-gradient-primary bg-mesh-gradient bg-skin-grid shadow-glow shadow-glow-lg animate-glow'
+        raw: 'bg-primary-500/20 text-primary-600 dark:text-primary-400 bg-surface bg-surface-sidebar bg-white bg-gray-50 text-gray-900 dark:bg-dark-800 border-dark-700 bg-action-500 text-action-foreground bg-blue-500 bg-red-500 bg-gradient-primary bg-mesh-gradient bg-skin-grid shadow-glow shadow-glow-lg animate-glow'
       }]
     })]).process(`
       @tailwind utilities;
@@ -32,6 +32,20 @@ describe('skin CSS integration', () => {
   it('resolves theme() gradients without leaking alpha placeholders into CSS', () => {
     expect(css).not.toContain('<alpha-value>')
     expect(css).toContain('linear-gradient(rgb(var(--color-primary-400, 45 212 191) / 1), rgb(var(--color-primary-500, 20 184 166) / 1))')
+  })
+
+  it('themes shared surfaces and legacy interaction roles without overriding status or white', () => {
+    const parsed = postcss.parse(css)
+    const utility = (name: string) => parsed.nodes.find((node) => node.type === 'rule' && node.selector === `.${name}`)?.toString()
+    expect(utility('bg-surface')).toContain('--color-surface-panel, 255 255 255')
+    expect(utility('bg-surface-sidebar')).toContain('--color-surface-sidebar, 255 255 255')
+    expect(utility('bg-gray-50')).toContain('--color-gray-50, 249 250 251')
+    expect(utility('border-dark-700')).toContain('--color-dark-700, 51 65 85')
+    expect(utility('bg-action-500')).toContain('--color-primary-500, 59 130 246')
+    expect(utility('text-action-foreground')).toContain('--color-action-foreground')
+    expect(utility('bg-white')).not.toContain('--color-')
+    expect(utility('bg-blue-500')).not.toContain('--color-')
+    expect(utility('bg-red-500')).not.toContain('--color-')
   })
 
   it('uses skin tokens for decorative gradients, glows and animation', () => {

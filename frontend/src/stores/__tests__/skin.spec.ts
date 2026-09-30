@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DEFAULT_PRIMARY_COLORS, SKIN_PRESETS, SKIN_STORAGE_KEY, resolveSkin } from '@/config/skins'
+import { DEFAULT_PRIMARY_COLORS, SKIN_PRESETS, SKIN_STORAGE_KEY, resolveSkin, skinVariables } from '@/config/skins'
 import { useSkinStore } from '@/stores/skin'
 
 function storageEvent(key: string | null, newValue: string | null, storageArea: Storage = localStorage) {
@@ -58,13 +58,25 @@ describe('skin preference', () => {
     expect(localStorage.length).toBe(1)
   })
 
+  it('applies the complete shared surface palette and updates it across tabs', () => {
+    store.initialize()
+    store.setSkin('sunset')
+    for (const [property, value] of Object.entries(skinVariables(resolveSkin('sunset')))) {
+      expect(document.documentElement.style.getPropertyValue(property)).toBe(value)
+    }
+    storageEvent(SKIN_STORAGE_KEY, 'amethyst')
+    for (const [property, value] of Object.entries(skinVariables(resolveSkin('amethyst')))) {
+      expect(document.documentElement.style.getPropertyValue(property)).toBe(value)
+    }
+  })
+
   it('restores default fallbacks while preserving unrelated inline styles', () => {
     document.documentElement.style.setProperty('--site-custom-color', 'red')
     store.initialize()
     store.setSkin('amethyst')
     store.resetSkin()
-    for (const shade of Object.keys(DEFAULT_PRIMARY_COLORS)) {
-      expect(document.documentElement.style.getPropertyValue(`--color-primary-${shade}`)).toBe('')
+    for (const property of Object.keys(skinVariables(resolveSkin('default')))) {
+      expect(document.documentElement.style.getPropertyValue(property)).toBe('')
     }
     expect(document.documentElement.style.getPropertyValue('--color-mesh-accent')).toBe('')
     expect(document.documentElement.style.getPropertyValue('--site-custom-color')).toBe('red')
@@ -168,13 +180,23 @@ describe('skin palette contracts', () => {
     }
   })
 
+  it.each(SKIN_PRESETS)('$id surface text stays readable in both modes', (preset) => {
+    const { gray, dark, panel, sidebar } = preset.surfaces
+    const ratio = (a: string, b: string) => (Math.max(luminance(a), luminance(b)) + 0.05) / (Math.min(luminance(a), luminance(b)) + 0.05)
+    expect(ratio(gray[500], panel)).toBeGreaterThanOrEqual(4.5)
+    expect(ratio(gray[700], sidebar)).toBeGreaterThanOrEqual(4.5)
+    expect(ratio(dark[400], dark[800])).toBeGreaterThanOrEqual(4.5)
+    expect(ratio(dark[200], dark[900])).toBeGreaterThanOrEqual(4.5)
+    expect(ratio(preset.colors[400], dark[800])).toBeGreaterThanOrEqual(4.5)
+  })
+
   it.each(SKIN_PRESETS)('$id terminal foreground meets 4.5:1 on the fixed dark surface', (preset) => {
     const foreground = preset.id === 'default' ? preset.colors[500] : preset.colors[400]
     expect((luminance(foreground) + 0.05) / (luminance('30 41 59') + 0.05)).toBeGreaterThanOrEqual(4.5)
   })
 
   it.each(SKIN_PRESETS.filter((skin) => skin.id !== 'default'))('$id accent icons meet 3:1 on dark surfaces', (preset) => {
-    expect((luminance(preset.colors[500]) + 0.05) / (luminance('30 41 59') + 0.05)).toBeGreaterThanOrEqual(3)
+    expect((luminance(preset.colors[500]) + 0.05) / (luminance(preset.surfaces.dark[800]) + 0.05)).toBeGreaterThanOrEqual(3)
   })
 
   it.each(SKIN_PRESETS.filter((skin) => skin.id !== 'default'))('$id action colors meet 4.5:1 with white', (preset) => {

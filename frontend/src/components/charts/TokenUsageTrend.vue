@@ -34,6 +34,7 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import { useChartTheme } from '@/composables/useChartTheme'
 import type { TrendDataPoint } from '@/types'
 
 ChartJS.register(
@@ -54,19 +55,19 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
-const isDarkMode = computed(() => {
-  return document.documentElement.classList.contains('dark')
+const { chartTheme } = useChartTheme({
+  light: { text: '#374151', grid: '#e5e7eb' },
+  dark: { text: '#e5e7eb', grid: '#374151' }
 })
 
-const chartColors = computed(() => ({
-  text: isDarkMode.value ? '#e5e7eb' : '#374151',
-  grid: isDarkMode.value ? '#374151' : '#e5e7eb',
+// These series colors encode token types and remain stable across skins.
+const chartColors = {
   input: '#3b82f6',
   output: '#10b981',
   cacheCreation: '#f59e0b',
   cacheRead: '#06b6d4',
   cacheHitRate: '#8b5cf6'
-}))
+}
 
 const chartData = computed(() => {
   if (!props.trendData?.length) return null
@@ -77,32 +78,32 @@ const chartData = computed(() => {
       {
         label: 'Input',
         data: props.trendData.map((d) => d.input_tokens),
-        borderColor: chartColors.value.input,
-        backgroundColor: `${chartColors.value.input}20`,
+        borderColor: chartColors.input,
+        backgroundColor: `${chartColors.input}20`,
         fill: true,
         tension: 0.3
       },
       {
         label: 'Output',
         data: props.trendData.map((d) => d.output_tokens),
-        borderColor: chartColors.value.output,
-        backgroundColor: `${chartColors.value.output}20`,
+        borderColor: chartColors.output,
+        backgroundColor: `${chartColors.output}20`,
         fill: true,
         tension: 0.3
       },
       {
         label: 'Cache Creation',
         data: props.trendData.map((d) => d.cache_creation_tokens),
-        borderColor: chartColors.value.cacheCreation,
-        backgroundColor: `${chartColors.value.cacheCreation}20`,
+        borderColor: chartColors.cacheCreation,
+        backgroundColor: `${chartColors.cacheCreation}20`,
         fill: true,
         tension: 0.3
       },
       {
         label: 'Cache Read',
         data: props.trendData.map((d) => d.cache_read_tokens),
-        borderColor: chartColors.value.cacheRead,
-        backgroundColor: `${chartColors.value.cacheRead}20`,
+        borderColor: chartColors.cacheRead,
+        backgroundColor: `${chartColors.cacheRead}20`,
         fill: true,
         tension: 0.3
       },
@@ -112,8 +113,8 @@ const chartData = computed(() => {
           const totalPromptTokens = d.input_tokens + d.cache_read_tokens + d.cache_creation_tokens
           return totalPromptTokens > 0 ? (d.cache_read_tokens / totalPromptTokens) * 100 : 0
         }),
-        borderColor: chartColors.value.cacheHitRate,
-        backgroundColor: `${chartColors.value.cacheHitRate}20`,
+        borderColor: chartColors.cacheHitRate,
+        backgroundColor: `${chartColors.cacheHitRate}20`,
         borderDash: [5, 5],
         fill: false,
         tension: 0.3,
@@ -134,7 +135,7 @@ const lineOptions = computed(() => ({
     legend: {
       position: 'top' as const,
       labels: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         usePointStyle: true,
         pointStyle: 'circle',
         padding: 15,
@@ -165,10 +166,10 @@ const lineOptions = computed(() => ({
   scales: {
     x: {
       grid: {
-        color: chartColors.value.grid
+        color: chartTheme.value.grid
       },
       ticks: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         font: {
           size: 10
         }
@@ -176,10 +177,10 @@ const lineOptions = computed(() => ({
     },
     y: {
       grid: {
-        color: chartColors.value.grid
+        color: chartTheme.value.grid
       },
       ticks: {
-        color: chartColors.value.text,
+        color: chartTheme.value.text,
         font: {
           size: 10
         },
@@ -194,7 +195,7 @@ const lineOptions = computed(() => ({
         drawOnChartArea: false
       },
       ticks: {
-        color: chartColors.value.cacheHitRate,
+        color: chartColors.cacheHitRate,
         font: {
           size: 10
         },

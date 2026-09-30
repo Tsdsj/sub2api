@@ -1,9 +1,9 @@
 export default {
   skinCenter: {
     title: '皮肤中心',
-    subtitle: '让界面更合心意。选择喜欢的配色，即刻体验焕然一新的界面。',
+    subtitle: '为背景、面板、导航和交互控件选择一套协调的配色，让工作空间更有自己的风格。',
     chooseSkin: '选择配色',
-    choiceHint: '点击皮肤即可立即应用，每张预览卡片均展示对应的配色。',
+    choiceHint: '选择后立即应用到整个界面。状态指示和分类图表保留原有颜色含义。',
     selected: '已选择',
     restoreDefault: '恢复默认',
     localTitle: '保存在此浏览器，随心搭配',

@@ -516,7 +516,7 @@ onUnmounted(() => {
 .select-trigger {
   @apply flex w-full items-center justify-between gap-2;
   @apply rounded-xl px-4 py-2.5 text-sm;
-  @apply bg-white dark:bg-dark-800;
+  @apply bg-surface dark:bg-dark-800;
   @apply border border-gray-200 dark:border-dark-600;
   @apply text-gray-900 dark:text-gray-100;
   @apply transition-all duration-200;
@@ -555,7 +555,7 @@ onUnmounted(() => {
 <style>
 .select-dropdown-portal {
   @apply w-max min-w-[200px];
-  @apply bg-white dark:bg-dark-800;
+  @apply bg-surface dark:bg-dark-800;
   @apply rounded-xl;
   @apply border border-gray-200 dark:border-dark-700;
   @apply shadow-lg shadow-black/10 dark:shadow-black/30;

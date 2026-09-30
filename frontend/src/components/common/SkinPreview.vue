@@ -4,7 +4,7 @@
     :style="previewStyle"
     aria-hidden="true"
   >
-    <div class="flex h-44 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-dark-700 dark:bg-dark-900 sm:h-48">
+    <div class="flex h-44 overflow-hidden rounded-lg border border-gray-200 bg-surface shadow-sm dark:border-dark-700 dark:bg-dark-900 sm:h-48">
       <div class="flex w-12 shrink-0 flex-col gap-3 border-r border-gray-100 p-2.5 dark:border-dark-800 sm:w-16 sm:p-3">
         <span class="preview-brand mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-md">
           <span class="h-2.5 w-2.5 rounded-sm border-2 border-white/90"></span>
@@ -59,19 +59,22 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { SkinPreset } from '@/config/skins'
+import { skinVariables, type SkinPreset } from '@/config/skins'
 
 const props = defineProps<{ preset: SkinPreset }>()
 const barHeights = [28, 45, 34, 60, 46, 72, 62, 87, 74, 100]
 const swatchShades = [300, 400, 500, 600, 700] as const
 
 // Keep each preview's palette independent from the currently applied skin.
-const previewStyle = computed(() => Object.fromEntries(
-  Object.entries(props.preset.colors).map(([shade, color]) => [
-    `--preview-primary-${shade}`,
-    color
-  ])
-))
+const previewStyle = computed(() => ({
+  ...skinVariables(props.preset),
+  ...Object.fromEntries(
+    Object.entries(props.preset.colors).map(([shade, color]) => [
+      `--preview-primary-${shade}`,
+      color
+    ])
+  )
+}))
 </script>
 
 <style scoped>
