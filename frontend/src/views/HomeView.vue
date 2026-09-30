@@ -590,7 +590,7 @@ onMounted(() => {
 /* Terminal Window */
 .terminal-window {
   width: 420px;
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+  background: linear-gradient(145deg, rgb(var(--color-dark-800, 30 41 59)) 0%, rgb(var(--color-dark-900, 15 23 42)) 100%);
   border-radius: 14px;
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.4),
@@ -610,7 +610,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  background: rgba(30, 41, 59, 0.8);
+  background: rgb(var(--color-dark-800, 30 41 59) / 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -640,7 +640,7 @@ onMounted(() => {
   text-align: center;
   font-size: 12px;
   font-family: ui-monospace, monospace;
-  color: #64748b;
+  color: rgb(var(--color-dark-500, 100 116 139));
   margin-right: 52px;
 }
 
@@ -700,7 +700,7 @@ onMounted(() => {
   color: rgb(var(--color-primary-400, 20 184 166));
 }
 .code-comment {
-  color: #64748b;
+  color: rgb(var(--color-dark-500, 100 116 139));
   font-style: italic;
 }
 .code-success {
@@ -735,7 +735,7 @@ onMounted(() => {
 }
 
 /* Dark mode adjustments */
-:deep(.dark) .terminal-window {
+.dark .terminal-window {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgb(var(--color-primary-500, 20 184 166) / 0.2),

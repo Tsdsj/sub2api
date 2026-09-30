@@ -40,12 +40,12 @@
 
     *:hover,
     *:focus-within {
-      scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+      scrollbar-color: rgb(var(--color-gray-400, 156 163 175) / 0.5) transparent;
     }
 
     .dark *:hover,
     .dark *:focus-within {
-      scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+      scrollbar-color: rgb(var(--color-gray-600, 75 85 99) / 0.5) transparent;
     }
   }
 

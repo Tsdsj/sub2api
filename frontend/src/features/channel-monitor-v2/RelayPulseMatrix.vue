@@ -570,8 +570,8 @@ function formatBucketRange(value: string) {
   max-width: 16rem;
   transform: translateX(-50%) translateY(4px);
   border-radius: 0.75rem;
-  border: 1px solid rgb(229 231 235);
-  background: rgb(255 255 255);
+  border: 1px solid rgb(var(--color-gray-200, 229 231 235));
+  background: rgb(var(--color-surface-panel, 255 255 255));
   padding: 0.5rem 0.625rem;
   box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15);
   opacity: 0;
@@ -579,27 +579,28 @@ function formatBucketRange(value: string) {
   transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
   white-space: nowrap;
 }
-:global(.dark) .pulse-tooltip {
-  border-color: rgb(55 65 81);
-  background: rgb(17 24 39);
-  color: rgb(229 231 235);
+/* Keep the ancestor outside :global(): Vue must retain each tooltip target. */
+.dark .pulse-tooltip {
+  border-color: rgb(var(--color-gray-700, 55 65 81));
+  background: rgb(var(--color-gray-900, 17 24 39));
+  color: rgb(var(--color-gray-200, 229 231 235));
 }
 .pulse-tooltip-line {
   display: block;
   font-size: 11px;
   line-height: 1.45;
-  color: rgb(75 85 99);
+  color: rgb(var(--color-gray-600, 75 85 99));
 }
-:global(.dark) .pulse-tooltip-line {
-  color: rgb(209 213 219);
+.dark .pulse-tooltip-line {
+  color: rgb(var(--color-gray-300, 209 213 219));
 }
 .pulse-tooltip-title {
   margin-bottom: 0.2rem;
   font-weight: 600;
-  color: rgb(17 24 39);
+  color: rgb(var(--color-gray-900, 17 24 39));
 }
-:global(.dark) .pulse-tooltip-title {
-  color: rgb(243 244 246);
+.dark .pulse-tooltip-title {
+  color: rgb(var(--color-gray-100, 243 244 246));
 }
 .pulse-cell:hover .pulse-tooltip,
 .pulse-cell:focus-visible .pulse-tooltip {
@@ -620,33 +621,33 @@ function formatBucketRange(value: string) {
   max-width: min(18rem, calc(100vw - 1.5rem));
   transform: translate(-50%, -100%);
   border-radius: 0.75rem;
-  border: 1px solid rgb(229 231 235);
-  background: rgb(255 255 255);
+  border: 1px solid rgb(var(--color-gray-200, 229 231 235));
+  background: rgb(var(--color-surface-panel, 255 255 255));
   padding: 0.5rem 0.625rem;
   box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.28);
   white-space: nowrap;
 }
-:global(.dark) .matrix-floating-tooltip {
-  border-color: rgb(55 65 81);
-  background: rgb(17 24 39);
-  color: rgb(229 231 235);
+.dark .matrix-floating-tooltip {
+  border-color: rgb(var(--color-gray-700, 55 65 81));
+  background: rgb(var(--color-gray-900, 17 24 39));
+  color: rgb(var(--color-gray-200, 229 231 235));
 }
 .matrix-floating-tooltip-line {
   display: block;
   font-size: 11px;
   line-height: 1.45;
-  color: rgb(75 85 99);
+  color: rgb(var(--color-gray-600, 75 85 99));
 }
-:global(.dark) .matrix-floating-tooltip-line {
-  color: rgb(209 213 219);
+.dark .matrix-floating-tooltip-line {
+  color: rgb(var(--color-gray-300, 209 213 219));
 }
 .matrix-floating-tooltip-title {
   margin-bottom: 0.2rem;
   font-weight: 600;
-  color: rgb(17 24 39);
+  color: rgb(var(--color-gray-900, 17 24 39));
 }
-:global(.dark) .matrix-floating-tooltip-title {
-  color: rgb(243 244 246);
+.dark .matrix-floating-tooltip-title {
+  color: rgb(var(--color-gray-100, 243 244 246));
 }
 
 @media (max-width: 640px) {

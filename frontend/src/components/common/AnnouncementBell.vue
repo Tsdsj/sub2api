@@ -456,19 +456,19 @@ watch(
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+  background: linear-gradient(to bottom, rgb(var(--color-dark-300, 203 213 225)), rgb(var(--color-dark-400, 148 163 184)));
   border-radius: 4px;
 }
 
 .dark .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #4b5563, #374151);
+  background: linear-gradient(to bottom, rgb(var(--color-gray-600, 75 85 99)), rgb(var(--color-gray-700, 55 65 81)));
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #94a3b8, #64748b);
+  background: linear-gradient(to bottom, rgb(var(--color-dark-400, 148 163 184)), rgb(var(--color-dark-500, 100 116 139)));
 }
 
 .dark .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #6b7280, #4b5563);
+  background: linear-gradient(to bottom, rgb(var(--color-gray-500, 107 114 128)), rgb(var(--color-gray-600, 75 85 99)));
 }
 </style>

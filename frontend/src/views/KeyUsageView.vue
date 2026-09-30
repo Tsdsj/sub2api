@@ -538,7 +538,9 @@ const RING_GRADIENTS = [
 const ringAnimated = ref(false)
 const displayPcts = ref<number[]>([])
 
-const ringTrackColor = computed(() => isDark.value ? '#222222' : '#F0F0EE')
+const ringTrackColor = computed(() => isDark.value
+  ? 'rgb(var(--color-dark-800, 34 34 34))'
+  : 'rgb(var(--color-gray-100, 240 240 238))')
 
 interface RingItem {
   title: string
@@ -967,13 +969,13 @@ onUnmounted(() => {
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background: linear-gradient(90deg, rgb(var(--color-gray-200, 229 231 235)) 25%, rgb(var(--color-gray-100, 243 244 246)) 50%, rgb(var(--color-gray-200, 229 231 235)) 75%);
   background-size: 200% 100%;
   animation: shimmer-kv 1.8s ease-in-out infinite;
   border-radius: 8px;
 }
-:global(.dark) .skeleton {
-  background: linear-gradient(90deg, #334155 25%, #1e293b 50%, #334155 75%);
+.dark .skeleton {
+  background: linear-gradient(90deg, rgb(var(--color-dark-700, 51 65 85)) 25%, rgb(var(--color-dark-800, 30 41 59)) 50%, rgb(var(--color-dark-700, 51 65 85)) 75%);
   background-size: 200% 100%;
 }
 

@@ -498,6 +498,7 @@ import {
   Filler
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
+import { useChartTheme } from '@/composables/useChartTheme'
 import BaseDialog from '@/components/common/BaseDialog.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import ModelDistributionChart from '@/components/charts/ModelDistributionChart.vue'
@@ -531,16 +532,11 @@ const emit = defineEmits<{
 const loading = ref(false)
 const stats = ref<AccountUsageStatsResponse | null>(null)
 
-// Dark mode detection
-const isDarkMode = computed(() => {
-  return document.documentElement.classList.contains('dark')
+// Concrete canvas colors stay reactive to skin and light/dark changes.
+const { chartTheme: chartColors } = useChartTheme({
+  light: { text: '#374151', grid: '#e5e7eb' },
+  dark: { text: '#e5e7eb', grid: '#374151' }
 })
-
-// Chart colors
-const chartColors = computed(() => ({
-  text: isDarkMode.value ? '#e5e7eb' : '#374151',
-  grid: isDarkMode.value ? '#374151' : '#e5e7eb'
-}))
 
 // Line chart data
 const trendChartData = computed(() => {

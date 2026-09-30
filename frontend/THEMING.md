@@ -73,3 +73,32 @@ in the frontend test suite; the central skin tests also run in `make test-fronte
 Run `make test-frontend`, the full frontend Vitest suite, and the frontend build.
 When a browser preview is available, additionally check same-tab switching,
 reload/reset, dark-mode switching, keyboard selection and narrow layouts.
+
+
+## Scoped and inline style coverage
+
+A utility class being tokenized does not prove the rendered component follows it.
+Higher-specificity scoped rules, sticky cells, inline canvas styles and Teleported
+popovers can override that class. Use the same variables in those declarations,
+with the original literal only as a fallback inside `var()`.
+
+The surface audit covers shared table headers, pinned columns and their selected /
+hover states; onboarding panels and arrows; monitoring tooltips; settings tabs;
+loading skeletons; captcha idle/hover chrome; sidebar separators; scrollbars;
+endpoint popovers; payment waiting surfaces; terminal demo neutrals; drag-selection
+marquees; and both account-statistics chart implementations.
+
+`DataTable.skinStyles.spec.ts` compiles the actual Vue SFC and Tailwind utilities,
+then verifies the winning CSSOM backgrounds for all presets and modes, populated /
+empty / loading tables, pinned columns, selection, hover, scroll state and reset.
+It includes a negative control for the original literal override. jsdom substitutes
+runtime custom properties for this check; it does not replace visual browser QA.
+
+`themeCoverageAudit.spec.ts` scans application style blocks for unthemed neutral
+literals and compiles every scoped block to catch dark selectors that lose their
+target. Use `.dark .component-target` for a scoped ancestor selector; do not use a
+`:global(.dark)` shape that the Vue compiler can collapse into a bare `.dark` rule.
+
+Intentional exceptions remain narrow: status/health/provider/categorical colors,
+white action labels, QR contrast, and black/white transparent shadows or highlights.
+Do not whitelist a whole component just to suppress a coverage failure.

@@ -191,11 +191,11 @@ onBeforeUnmount(() => {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+  background: linear-gradient(to bottom, rgb(var(--color-dark-300, 203 213 225)), rgb(var(--color-dark-400, 148 163 184)));
   border-radius: 4px;
 }
 
 .dark .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #4b5563, #374151);
+  background: linear-gradient(to bottom, rgb(var(--color-gray-600, 75 85 99)), rgb(var(--color-gray-700, 55 65 81)));
 }
 </style>
